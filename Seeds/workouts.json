@@ -1,0 +1,36 @@
+[
+  {
+    "id": "strength_fb_01",
+    "title": "Full Body Starter",
+    "duration": 30,
+    "level": "beginner",
+    "equipment": ["bodyweight", "dumbbells"],
+    "phases": [
+      {
+        "name": "Warm-up",
+        "blocks": [
+          {"exercise": "jumping_jacks", "duration": 60, "video": "jumping_jacks.mp4", "cues": ["Stay light", "Full arms"]}
+        ]
+      },
+      {
+        "name": "Main",
+        "blocks": [
+          {"branch": "dumbbells", "exercise": "db_squat", "duration": 45, "rest": 15, "cues": ["Heels down", "Chest tall"]},
+          {"branch": "bodyweight", "exercise": "air_squat", "duration": 45, "rest": 15, "cues": ["Knees out", "Neutral spine"]},
+          {"exercise": "pushup", "duration": 45, "rest": 15, "cues": ["Elbows ~45°", "Brace core"]}
+        ]
+      },
+      {
+        "name": "Cool-down",
+        "blocks": [
+          {"exercise": "child_pose", "duration": 60}
+        ]
+      }
+    ],
+    "music": {
+      "playlistAdminId": "ply_strength_fb_01",
+      "bpmTarget": [120, 132],
+      "energy": [0.55, 0.8]
+    }
+  }
+]

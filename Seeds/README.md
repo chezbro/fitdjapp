@@ -1,0 +1,1 @@
+Seed JSON, placeholder audio/video folders, and stub services allow the app to boot in a simulator without secrets. Replace stub implementations with production-ready services and add the necessary SDKs (Spotify, Firebase, StoreKit 2) to complete functionality.

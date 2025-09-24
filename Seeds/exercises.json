@@ -1,0 +1,5 @@
+[
+  {"id": "db_squat", "name": "Dumbbell Squat", "muscles": ["quads", "glutes"], "equipment": ["dumbbells"], "difficulty": "beginner", "video": "db_squat.mp4"},
+  {"id": "air_squat", "name": "Air Squat", "muscles": ["quads", "glutes"], "equipment": ["bodyweight"], "difficulty": "beginner", "video": "air_squat.mp4"},
+  {"id": "pushup", "name": "Push-up", "muscles": ["chest", "triceps"], "equipment": ["bodyweight"], "difficulty": "beginner", "video": "pushup.mp4"}
+]
