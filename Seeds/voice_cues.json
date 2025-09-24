@@ -1,0 +1,4 @@
+[
+  {"id": "cue_warmup_start", "text": "Let's get warm—big energy.", "type": 1, "locale": "en-US", "prebundledAsset": "warmup_start.mp3"},
+  {"id": "cue_push", "text": "Drive through the floor and stay tall!", "type": 3, "locale": "en-US"}
+]
