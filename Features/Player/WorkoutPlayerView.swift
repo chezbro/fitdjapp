@@ -1,5 +1,12 @@
 import SwiftUI
 
+private struct NowPlayingTrack {
+    let title: String
+    let artist: String
+    let bpm: Int
+    let energy: Double
+}
+
 struct WorkoutPlayerView: View {
     let workout: Workout
     let container: DependencyContainer
@@ -17,52 +24,46 @@ struct WorkoutPlayerView: View {
 
     @State private var cueRotation: [VoiceCue] = []
     @State private var cueIndex = 0
+    @State private var transcript: [String] = []
+
+    @State private var mockTracks: [NowPlayingTrack] = []
+    @State private var currentTrackIndex = 0
+
+    @State private var completionInsights: WorkoutInsights?
 
     private let historyStore = WorkoutHistoryStore()
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(workout.title)
-                .font(.title.bold())
-
-            Text(formattedTime(timeRemaining))
-                .font(.system(size: 48, weight: .bold, design: .monospaced))
-
-            statusPills
-
-            VStack(spacing: 8) {
-                Slider(value: $coachMix, in: 0...1)
-                Text("Coach Mix: \(Int(coachMix * 100))%")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 18) {
+                topHeader
+                timerCard
+                statusPills
+                nowPlayingCard
+                coachMixCard
+                primaryControls
+                transcriptCard
+                finishButton
             }
-
-            HStack(spacing: 12) {
-                Button(isPaused ? "Resume" : "Pause") { togglePause() }
-                Button("Skip -15s") { skip(seconds: 15) }
-                Button("Easier") { coachMix = max(0, coachMix - 0.1) }
-                Button("Harder") { coachMix = min(1, coachMix + 0.1) }
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(Color.fitdjAccent)
-
-            if timeRemaining == 0 {
-                Button("Finish Workout") {
-                    finishWorkout()
-                }
-                .buttonStyle(.borderedProminent)
-            }
+            .padding(16)
+            .padding(.bottom, 24)
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                colors: [Color.fitdjBackground, Color.black],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+        )
         .foregroundColor(.white)
         .onAppear {
             startedAt = Date()
             timeRemaining = workout.guidedDurationSeconds
             configureCueRotation()
+            configureMockTracks()
             startSession()
             startTicker()
         }
@@ -73,21 +74,225 @@ struct WorkoutPlayerView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Done") { dismiss() }
+                    .foregroundColor(.white)
             }
         }
         .fullScreenCover(isPresented: $showCompletion) {
-            CompletionView(workout: workout, duration: Date().timeIntervalSince(startedAt))
+            CompletionView(
+                workout: workout,
+                duration: Date().timeIntervalSince(startedAt),
+                insights: completionInsights
+            )
         }
     }
 
-    private var statusPills: some View {
-        VStack(spacing: 8) {
-            Text("Workout: \(sessionStatus)")
-            Text("Music: \(musicStatus)")
-            Text("Coach: \(coachStatus)")
+    private var topHeader: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(workout.title)
+                    .font(.title2.bold())
+                Text("Guided Session")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            Spacer()
         }
-        .font(.footnote)
-        .foregroundColor(.secondary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var timerCard: some View {
+        VStack(spacing: 10) {
+            Text(formattedTime(timeRemaining))
+                .font(.system(size: 60, weight: .heavy, design: .rounded))
+
+            ProgressView(value: progressValue)
+                .tint(Color.fitdjAccent)
+
+            Text(isPaused ? "Paused" : "In Progress")
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.white.opacity(0.75))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(18)
+        .background(Color.white.opacity(0.07))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
+    }
+
+    private var progressValue: Double {
+        let total = max(1, workout.guidedDurationSeconds)
+        let elapsed = total - timeRemaining
+        return min(1, max(0, Double(elapsed) / Double(total)))
+    }
+
+    private var statusPills: some View {
+        VStack(spacing: 10) {
+            statusPill(icon: "figure.run", title: "Workout", value: sessionStatus)
+            statusPill(icon: "music.note", title: "Music", value: musicStatus)
+            statusPill(icon: "waveform", title: "Coach", value: coachStatus)
+        }
+    }
+
+    private func statusPill(icon: String, title: String, value: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .foregroundColor(.white.opacity(0.8))
+            Text(title)
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.white.opacity(0.75))
+            Spacer()
+            Text(value)
+                .font(.footnote)
+                .lineLimit(1)
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(Color.white.opacity(0.07))
+        .clipShape(Capsule())
+    }
+
+    private var nowPlayingCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Now Playing")
+                .font(.headline)
+
+            if let track = currentTrack {
+                Text(track.title)
+                    .font(.title3.bold())
+                Text(track.artist)
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.75))
+
+                HStack(spacing: 10) {
+                    chip(text: "\(track.bpm) BPM")
+                    chip(text: "Energy \(Int(track.energy * 100))%")
+                }
+            } else {
+                Text("No track selected")
+                    .foregroundColor(.white.opacity(0.7))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.white.opacity(0.07))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func chip(text: String) -> some View {
+        Text(text)
+            .font(.caption.weight(.semibold))
+            .foregroundColor(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Color.fitdjAccent.opacity(0.35))
+            .clipShape(Capsule())
+    }
+
+    private var coachMixCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Coach Mix")
+                    .font(.headline)
+                Spacer()
+                Text("\(Int(coachMix * 100))%")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.white.opacity(0.85))
+            }
+
+            Slider(value: $coachMix, in: 0...1)
+                .tint(Color.fitdjAccent)
+        }
+        .padding(16)
+        .background(Color.white.opacity(0.07))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private var primaryControls: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 10) {
+                actionButton(isPaused ? "Resume" : "Pause", systemImage: isPaused ? "play.fill" : "pause.fill") {
+                    togglePause()
+                }
+
+                actionButton("Skip 15s", systemImage: "goforward.15") {
+                    skip(seconds: 15)
+                }
+
+                actionButton("Next", systemImage: "forward.fill") {
+                    nextTrack()
+                }
+            }
+
+            HStack(spacing: 10) {
+                actionButton("Easier", systemImage: "minus.circle") {
+                    coachMix = max(0, coachMix - 0.1)
+                }
+
+                actionButton("Harder", systemImage: "plus.circle") {
+                    coachMix = min(1, coachMix + 0.1)
+                }
+            }
+        }
+    }
+
+    private func actionButton(_ title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.1))
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var transcriptCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Trainer Transcript")
+                .font(.headline)
+
+            if transcript.isEmpty {
+                Text("No coach lines yet.")
+                    .foregroundColor(.white.opacity(0.7))
+            } else {
+                ForEach(Array(transcript.suffix(5).enumerated()), id: \.offset) { _, line in
+                    Text("• \(line)")
+                        .font(.footnote)
+                        .foregroundColor(.white.opacity(0.8))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.white.opacity(0.07))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var finishButton: some View {
+        if timeRemaining == 0 {
+            Button("Finish Workout") {
+                finishWorkout()
+            }
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(Color.fitdjAccent)
+            .foregroundColor(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+    }
+
+    private var currentTrack: NowPlayingTrack? {
+        guard !mockTracks.isEmpty else { return nil }
+        return mockTracks[currentTrackIndex % mockTracks.count]
     }
 
     private func configureCueRotation() {
@@ -104,6 +309,19 @@ struct WorkoutPlayerView: View {
                     )
                 }
             }
+    }
+
+    private func configureMockTracks() {
+        let lowBPM = Int(workout.music.bpmTarget[0])
+        let highBPM = Int(workout.music.bpmTarget[1])
+        let lowEnergy = workout.music.energy[0]
+        let highEnergy = workout.music.energy[1]
+
+        mockTracks = [
+            NowPlayingTrack(title: "Drive Mode", artist: "FITDJ Radio", bpm: lowBPM, energy: lowEnergy),
+            NowPlayingTrack(title: "Rep Flow", artist: "Coach Mix", bpm: (lowBPM + highBPM) / 2, energy: (lowEnergy + highEnergy) / 2),
+            NowPlayingTrack(title: "Last Set Push", artist: "Workout Sound", bpm: highBPM, energy: highEnergy)
+        ]
     }
 
     private func startSession() {
@@ -131,7 +349,10 @@ struct WorkoutPlayerView: View {
                     defaultCriteria: session.intensity
                 )
                 try await container.musicService.startPlaylist(playlist)
-                await MainActor.run { musicStatus = "Playing" }
+                await MainActor.run {
+                    musicStatus = "Playing"
+                    currentTrackIndex = 0
+                }
             } catch {
                 await MainActor.run { musicStatus = "Music unavailable" }
             }
@@ -145,6 +366,7 @@ struct WorkoutPlayerView: View {
         tickTask?.cancel()
         tickTask = Task {
             var secondsSinceCue = 0
+            var secondsSinceTrack = 0
 
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
@@ -155,10 +377,16 @@ struct WorkoutPlayerView: View {
                     timeRemaining = max(0, timeRemaining - 1)
                 }
                 secondsSinceCue += 1
+                secondsSinceTrack += 1
 
                 if secondsSinceCue >= 20 {
                     secondsSinceCue = 0
                     await speakNextCueIfAvailable()
+                }
+
+                if secondsSinceTrack >= 30 {
+                    secondsSinceTrack = 0
+                    await MainActor.run { nextTrack() }
                 }
             }
         }
@@ -173,7 +401,28 @@ struct WorkoutPlayerView: View {
         let cue = cueRotation[cueIndex % cueRotation.count]
         cueIndex += 1
         await container.voiceService.speak(cue, deadline: nil)
-        await MainActor.run { coachStatus = cue.text }
+
+        await MainActor.run {
+            coachStatus = cue.text
+            transcript.append(cue.text)
+        }
+    }
+
+    private func nextTrack() {
+        guard !mockTracks.isEmpty else { return }
+        currentTrackIndex = (currentTrackIndex + 1) % mockTracks.count
+        if let track = currentTrack {
+            musicStatus = "Playing · \(track.title)"
+        }
+
+        Task {
+            await container.musicService.nextTrack(
+                matching: TrackCriteria(
+                    bpm: workout.music.bpmTarget[0]...workout.music.bpmTarget[1],
+                    energy: workout.music.energy[0]...workout.music.energy[1]
+                )
+            )
+        }
     }
 
     private func togglePause() {
@@ -191,14 +440,28 @@ struct WorkoutPlayerView: View {
 
     private func skip(seconds: Int) {
         timeRemaining = max(0, timeRemaining - seconds)
-        Task { await container.musicService.nextTrack(matching: TrackCriteria(bpm: workout.music.bpmTarget[0]...workout.music.bpmTarget[1], energy: workout.music.energy[0]...workout.music.energy[1])) }
+        nextTrack()
     }
 
     private func finishWorkout() {
         container.playbackController.stop()
         let elapsed = max(1, Int(Date().timeIntervalSince(startedAt)))
         historyStore.saveCompletion(workoutId: workout.id, workoutTitle: workout.title, durationSeconds: elapsed)
+
+        completionInsights = WorkoutInsights(
+            weeklyCompletions: historyStore.weeklyStreakCount(),
+            totalCompletions: historyStore.totalCompletions(),
+            bestWorkoutSeconds: historyStore.bestDuration(for: workout.id),
+            averageWorkoutSeconds: historyStore.averageDuration(for: workout.id),
+            estimatedCalories: estimateCalories(elapsedSeconds: elapsed)
+        )
+
         showCompletion = true
+    }
+
+    private func estimateCalories(elapsedSeconds: Int) -> Int {
+        let minutes = Double(elapsedSeconds) / 60.0
+        return max(40, Int(minutes * 8.5))
     }
 
     private func formattedTime(_ seconds: Int) -> String {

@@ -1,21 +1,140 @@
 import SwiftUI
 
+struct WorkoutInsights {
+    let weeklyCompletions: Int
+    let totalCompletions: Int
+    let bestWorkoutSeconds: Int?
+    let averageWorkoutSeconds: Int?
+    let estimatedCalories: Int
+}
+
 struct CompletionView: View {
     let workout: Workout
     let duration: TimeInterval
+    let insights: WorkoutInsights?
+
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 24) {
-            Text("Workout Complete!")
-                .font(.largeTitle.bold())
-            Text("You crushed \(workout.title) in \(Int(duration / 60)) minutes.")
-            Button("Share") {}
-                .buttonStyle(.borderedProminent)
-                .tint(Color.fitdjAccent)
+        ZStack {
+            LinearGradient(
+                colors: [Color.fitdjBackground, Color.black],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    trophyHeader
+                    summaryCard
+
+                    if let insights {
+                        insightsGrid(insights)
+                    }
+
+                    actionRow
+                }
+                .padding(16)
+                .padding(.bottom, 24)
+            }
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black.ignoresSafeArea())
         .foregroundColor(.white)
+    }
+
+    private var trophyHeader: some View {
+        VStack(spacing: 10) {
+            ZStack {
+                Circle()
+                    .fill(Color.fitdjAccent.opacity(0.28))
+                    .frame(width: 84, height: 84)
+
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.white)
+            }
+
+            Text("Workout Complete")
+                .font(.largeTitle.bold())
+
+            Text("Excellent effort. Keep stacking consistent days.")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.75))
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var summaryCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(workout.title)
+                .font(.title3.bold())
+            Text("Finished in \(Int(duration / 60)) min")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.75))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.white.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func insightsGrid(_ insights: WorkoutInsights) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Session Insights")
+                .font(.headline)
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                statTile(title: "Calories", value: "\(insights.estimatedCalories)")
+                statTile(title: "This Week", value: "\(insights.weeklyCompletions)")
+                statTile(title: "Total", value: "\(insights.totalCompletions)")
+                statTile(title: "Average", value: insights.averageWorkoutSeconds.map(format) ?? "—")
+                statTile(title: "Personal Best", value: insights.bestWorkoutSeconds.map(format) ?? "—")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.white.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func statTile(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.white.opacity(0.68))
+            Text(value)
+                .font(.title3.bold())
+                .foregroundColor(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color.white.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private var actionRow: some View {
+        VStack(spacing: 10) {
+            Button("Share Progress") {}
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 13)
+                .background(Color.fitdjAccent)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Button("Done") {
+                dismiss()
+            }
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 13)
+            .background(Color.white.opacity(0.1))
+            .foregroundColor(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+    }
+
+    private func format(_ seconds: Int) -> String {
+        String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
 }
