@@ -1,5 +1,16 @@
 import SwiftUI
 
+private struct ScrollBackgroundHiddenIfAvailable: ViewModifier {
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content.scrollContentBackground(.hidden)
+        } else {
+            content
+        }
+    }
+}
+
 struct SettingsView: View {
     let container: DependencyContainer
     @State private var captionsEnabled = true
@@ -30,7 +41,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .scrollContentBackground(.hidden)
+        .modifier(ScrollBackgroundHiddenIfAvailable())
         .background(Color.black)
         .foregroundColor(.white)
         .navigationTitle("Settings")

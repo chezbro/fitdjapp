@@ -14,13 +14,10 @@ actor TimelineScheduler {
     }
 
     func schedule(atOffset seconds: TimeInterval, _ action: @escaping () -> Void) async {
-        let deadline = DispatchTime.now() + seconds
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+            let ns = UInt64(max(0, seconds) * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: ns)
             action()
-        }
-        Task {
-            try? await Task.sleep(until: deadline, clock: .continuous)
         }
     }
 }

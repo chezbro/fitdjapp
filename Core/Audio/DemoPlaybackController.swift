@@ -4,7 +4,7 @@ final class DemoPlaybackController: PlaybackController {
     private var scheduler = TimelineScheduler()
 
     func start(_ session: WorkoutSession) async throws {
-        scheduler.startNow()
+        await scheduler.startNow()
         // TODO: Bind to real playback engine
     }
 

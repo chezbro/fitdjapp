@@ -15,7 +15,7 @@ final class AppCoordinator: ObservableObject {
         switch route {
         case .launch:
             LaunchView()
-                .task { await bootstrap() }
+                .task { await self.bootstrap() }
         case .onboarding:
             OnboardingCoordinatorView(container: container) {
                 await self.completeOnboarding()

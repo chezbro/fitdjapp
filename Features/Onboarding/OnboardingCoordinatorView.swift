@@ -34,7 +34,7 @@ struct OnboardingCoordinatorView: View {
         .background(Color.black.ignoresSafeArea())
         .animation(.easeInOut, value: step)
         .task {
-            await container.musicService.authorize()
+            _ = try? await container.musicService.authorize()
         }
     }
 

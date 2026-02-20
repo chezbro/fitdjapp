@@ -1,0 +1,65 @@
+name: FITDJ
+options:
+  minimumXcodeGenVersion: 2.38.0
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+    IPHONEOS_DEPLOYMENT_TARGET: 15.0
+targets:
+  FITDJ:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+        excludes:
+          - Resources/**
+      - path: Core
+      - path: Features
+    resources:
+      - path: App/Resources/Colors.xcassets
+      - path: Seeds/exercises.json
+      - path: Seeds/voice_cues.json
+      - path: Seeds/workouts.json
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fitdj.app
+        INFOPLIST_FILE: App/Resources/Info.plist
+        PRODUCT_NAME: FITDJ
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+  FITDJTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/UnitTests
+    dependencies:
+      - target: FITDJ
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fitdj.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/FITDJ.app/FITDJ"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  FITDJUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: Tests/UITests
+    dependencies:
+      - target: FITDJ
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fitdj.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  FITDJ:
+    build:
+      targets:
+        FITDJ: all
+        FITDJTests: [test]
+        FITDJUITests: [test]
+    test:
+      targets:
+        - name: FITDJTests
+        - name: FITDJUITests
