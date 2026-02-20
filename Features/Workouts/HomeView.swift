@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var searchText = ""
     @State private var selectedLevel: WorkoutLevel?
     @State private var weeklyCompletions = 0
+    @State private var animateHero = false
 
     private let historyStore = WorkoutHistoryStore()
 
@@ -78,27 +79,50 @@ struct HomeView: View {
         .task {
             await loadWorkouts()
             refreshStats()
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.82)) {
+                animateHero = true
+            }
         }
     }
 
     private var headerCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("This week")
-                .font(.headline)
-                .foregroundColor(.white.opacity(0.9))
-
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("\(weeklyCompletions)")
-                    .font(.system(size: 42, weight: .heavy, design: .rounded))
-                    .foregroundColor(.white)
-                Text("workouts")
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("This week")
                     .font(.headline)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white.opacity(0.9))
+
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text("\(weeklyCompletions)")
+                        .font(.system(size: 42, weight: .heavy, design: .rounded))
+                        .foregroundColor(.white)
+                    Text("workouts")
+                        .font(.headline)
+                        .foregroundColor(.white.opacity(0.8))
+                }
+
+                Text("Stay consistent. One more session keeps momentum high.")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.72))
             }
 
-            Text("Stay consistent. One more session keeps momentum high.")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.72))
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.2), lineWidth: 8)
+                    .frame(width: 64, height: 64)
+
+                Circle()
+                    .trim(from: 0, to: animateHero ? min(1, Double(weeklyCompletions) / 7.0) : 0)
+                    .stroke(Color.white, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: 64, height: 64)
+
+                Text("\(min(weeklyCompletions, 7))")
+                    .font(.headline.bold())
+                    .foregroundColor(.white)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
@@ -137,7 +161,12 @@ struct HomeView: View {
     }
 
     private func filterPill(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button {
+            Haptics.tap()
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                action()
+            }
+        } label: {
             Text(title)
                 .font(.subheadline.weight(.semibold))
                 .foregroundColor(isSelected ? .black : .white)

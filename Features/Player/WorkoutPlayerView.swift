@@ -30,6 +30,7 @@ struct WorkoutPlayerView: View {
     @State private var currentTrackIndex = 0
 
     @State private var completionInsights: WorkoutInsights?
+    @State private var pulse = false
 
     private let historyStore = WorkoutHistoryStore()
 
@@ -66,6 +67,9 @@ struct WorkoutPlayerView: View {
             configureMockTracks()
             startSession()
             startTicker()
+            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                pulse = true
+            }
         }
         .onDisappear {
             tickTask?.cancel()
@@ -120,6 +124,7 @@ struct WorkoutPlayerView: View {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(Color.white.opacity(0.08), lineWidth: 1)
         )
+        .scaleEffect(pulse && !isPaused ? 1.01 : 1.0)
     }
 
     private var progressValue: Double {
@@ -240,7 +245,10 @@ struct WorkoutPlayerView: View {
     }
 
     private func actionButton(_ title: String, systemImage: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button {
+            Haptics.tap()
+            action()
+        } label: {
             Label(title, systemImage: systemImage)
                 .font(.subheadline.weight(.semibold))
                 .frame(maxWidth: .infinity)
@@ -444,6 +452,7 @@ struct WorkoutPlayerView: View {
     }
 
     private func finishWorkout() {
+        Haptics.success()
         container.playbackController.stop()
         let elapsed = max(1, Int(Date().timeIntervalSince(startedAt)))
         historyStore.saveCompletion(workoutId: workout.id, workoutTitle: workout.title, durationSeconds: elapsed)

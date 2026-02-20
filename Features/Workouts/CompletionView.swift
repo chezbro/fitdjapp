@@ -14,6 +14,7 @@ struct CompletionView: View {
     let insights: WorkoutInsights?
 
     @Environment(\.dismiss) private var dismiss
+    @State private var glow = false
 
     var body: some View {
         ZStack {
@@ -40,14 +41,21 @@ struct CompletionView: View {
             }
         }
         .foregroundColor(.white)
+        .onAppear {
+            Haptics.success()
+            withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
+                glow = true
+            }
+        }
     }
 
     private var trophyHeader: some View {
         VStack(spacing: 10) {
             ZStack {
                 Circle()
-                    .fill(Color.fitdjAccent.opacity(0.28))
+                    .fill(Color.fitdjAccent.opacity(glow ? 0.42 : 0.24))
                     .frame(width: 84, height: 84)
+                    .scaleEffect(glow ? 1.06 : 0.96)
 
                 Image(systemName: "checkmark.seal.fill")
                     .font(.system(size: 36, weight: .bold))
@@ -123,6 +131,7 @@ struct CompletionView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
             Button("Done") {
+                Haptics.tap()
                 dismiss()
             }
             .font(.headline)

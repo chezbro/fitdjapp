@@ -28,6 +28,7 @@
 		8A134E6EF87BCC2C36776C4C /* DuckingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708A1B6D99BFF70686BEC706 /* DuckingCoordinator.swift */; };
 		8CC6A525E564D4FB8A52CE40 /* AnalyticsServiceStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24683B5AFB59FE07A176F80 /* AnalyticsServiceStub.swift */; };
 		967F94F56929416FF78E4F22 /* SpotifyMusicServiceStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71111B6179190E1FAFCABB66 /* SpotifyMusicServiceStub.swift */; };
+		9A3D8516C99C83021BC2C4F2 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEA9B8D0B98E75987442561 /* Haptics.swift */; };
 		A8FAD3CB403B9D1F8A3961BB /* AudioEngineController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68409E5312BCD6F69547476E /* AudioEngineController.swift */; };
 		AA8520A88041746FFCD63BB8 /* WorkoutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205B7F7DA06267D6EA56F64E /* WorkoutDetailView.swift */; };
 		ABBC27F1B62705B371623A7B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84B925F44E91BB2FABAA512 /* PaywallView.swift */; };
@@ -72,6 +73,7 @@
 		50A253EFF2BCA705B4AFC7AB /* TimelineSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineSchedulerTests.swift; sourceTree = "<group>"; };
 		59096F2152AC2E6F09CC0700 /* FITDJApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FITDJApp.swift; sourceTree = "<group>"; };
 		5960BB6194B0F4E6B6CDF916 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5EEA9B8D0B98E75987442561 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		61639FF4C42BDBDE25D71D6A /* NetworkClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClientStub.swift; sourceTree = "<group>"; };
 		619430B8AD66B75A25684D26 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		6511DB831CE84B2A3335AA53 /* OnboardingCoordinatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinatorView.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				C99EC290FA4660974D3E346D /* Configuration.swift */,
+				5EEA9B8D0B98E75987442561 /* Haptics.swift */,
 				67815986850EC050380DE180 /* Protocols.swift */,
 				84BAB8D4BDC4B2F11FFEB178 /* TimelineScheduler.swift */,
 				332B4F139BCFA09A5D27CA00 /* WorkoutFiltering.swift */,
@@ -443,6 +446,7 @@
 				8A134E6EF87BCC2C36776C4C /* DuckingCoordinator.swift in Sources */,
 				2DBEC30E3E13E1F17BBB0551 /* ElevenLabsVoiceServiceStub.swift in Sources */,
 				2DBE3F9190BBB236FF5ADF00 /* FITDJApp.swift in Sources */,
+				9A3D8516C99C83021BC2C4F2 /* Haptics.swift in Sources */,
 				F58FE1637A05588771BB101F /* HomeView.swift in Sources */,
 				19F0B856A046F07D76A8724D /* LaunchView.swift in Sources */,
 				4B870D71A5FE7098A7B3868D /* LibraryView.swift in Sources */,
