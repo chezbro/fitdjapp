@@ -4,6 +4,12 @@ struct HomeView: View {
     let container: DependencyContainer
     @State private var workouts: [Workout] = []
     @State private var isLoading = true
+    @State private var searchText = ""
+    @State private var selectedLevel: WorkoutLevel?
+
+    private var filteredWorkouts: [Workout] {
+        WorkoutFiltering.apply(workouts: workouts, query: searchText, level: selectedLevel)
+    }
 
     var body: some View {
         NavigationView {
@@ -11,17 +17,32 @@ struct HomeView: View {
                 if isLoading {
                     ProgressView()
                 } else {
-                    List(workouts) { workout in
+                    List(filteredWorkouts) { workout in
                         NavigationLink(destination: WorkoutDetailView(workout: workout, container: container)) {
                             WorkoutRow(workout: workout)
                         }
                         .listRowBackground(Color.black)
                     }
                     .listStyle(.insetGrouped)
+                    .searchable(text: $searchText, prompt: "Search workouts")
+                    .refreshable { await loadWorkouts() }
                 }
             }
             .navigationTitle("Featured")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Button("All Levels") { selectedLevel = nil }
+                        ForEach(WorkoutLevel.allCases) { level in
+                            Button(level.rawValue.capitalized) {
+                                selectedLevel = level
+                            }
+                        }
+                    } label: {
+                        Label(selectedLevel?.rawValue.capitalized ?? "All Levels", systemImage: "line.3.horizontal.decrease.circle")
+                    }
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: SettingsView(container: container)) {
                         Image(systemName: "gear")
@@ -34,12 +55,14 @@ struct HomeView: View {
     }
 
     private func loadWorkouts() async {
+        isLoading = true
+        defer { isLoading = false }
+
         do {
             workouts = try await container.workoutRepository.fetchFeatured()
         } catch {
             workouts = []
         }
-        isLoading = false
     }
 }
 

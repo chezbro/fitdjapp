@@ -13,7 +13,7 @@ enum Equipment: String, Codable, CaseIterable, Identifiable {
 
 struct WorkoutPhase: Codable, Identifiable {
     struct Block: Codable, Identifiable {
-        let id = UUID()
+        var id = UUID()
         let branch: String?
         let exercise: String
         let duration: Int
@@ -22,9 +22,13 @@ struct WorkoutPhase: Codable, Identifiable {
         let cues: [String]?
     }
 
-    let id = UUID()
+    var id = UUID()
     let name: String
     let blocks: [Block]
+
+    var totalDurationSeconds: Int {
+        blocks.reduce(0) { $0 + $1.duration + ($1.rest ?? 0) }
+    }
 }
 
 struct Workout: Codable, Identifiable {
@@ -41,6 +45,10 @@ struct Workout: Codable, Identifiable {
     let equipment: [Equipment]
     let phases: [WorkoutPhase]
     let music: MusicBinding
+
+    var guidedDurationSeconds: Int {
+        phases.reduce(0) { $0 + $1.totalDurationSeconds }
+    }
 }
 
 struct Exercise: Codable, Identifiable {
