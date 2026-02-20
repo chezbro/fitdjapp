@@ -26,4 +26,6 @@
 1. Search + level filtering on Home.
 2. Favorite workout persistence in detail screen.
 3. Real workout countdown with pause/skip/intensity controls + finish flow.
-4. Added unit coverage for filtering and guided duration math.
+4. End-to-end session orchestration in player: starts workout session + attempts music authorization/start + rotates trainer cues while session runs.
+5. Quick Start entry point and weekly completion stats on Home.
+6. Added unit coverage for filtering, guided duration math, and workout history persistence.

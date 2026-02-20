@@ -6,6 +6,9 @@ struct HomeView: View {
     @State private var isLoading = true
     @State private var searchText = ""
     @State private var selectedLevel: WorkoutLevel?
+    @State private var weeklyCompletions = 0
+
+    private let historyStore = WorkoutHistoryStore()
 
     private var filteredWorkouts: [Workout] {
         WorkoutFiltering.apply(workouts: workouts, query: searchText, level: selectedLevel)
@@ -17,15 +20,31 @@ struct HomeView: View {
                 if isLoading {
                     ProgressView()
                 } else {
-                    List(filteredWorkouts) { workout in
-                        NavigationLink(destination: WorkoutDetailView(workout: workout, container: container)) {
-                            WorkoutRow(workout: workout)
+                    List {
+                        summaryCard
+                            .listRowBackground(Color.black)
+
+                        if let quick = filteredWorkouts.first {
+                            NavigationLink(destination: WorkoutDetailView(workout: quick, container: container)) {
+                                Label("Quick Start: \(quick.title)", systemImage: "bolt.fill")
+                                    .foregroundColor(.white)
+                            }
+                            .listRowBackground(Color.black)
                         }
-                        .listRowBackground(Color.black)
+
+                        ForEach(filteredWorkouts) { workout in
+                            NavigationLink(destination: WorkoutDetailView(workout: workout, container: container)) {
+                                WorkoutRow(workout: workout)
+                            }
+                            .listRowBackground(Color.black)
+                        }
                     }
                     .listStyle(.insetGrouped)
                     .searchable(text: $searchText, prompt: "Search workouts")
-                    .refreshable { await loadWorkouts() }
+                    .refreshable {
+                        await loadWorkouts()
+                        refreshStats()
+                    }
                 }
             }
             .navigationTitle("Featured")
@@ -51,7 +70,25 @@ struct HomeView: View {
             }
         }
         .accentColor(Color.fitdjAccent)
-        .task { await loadWorkouts() }
+        .task {
+            await loadWorkouts()
+            refreshStats()
+        }
+    }
+
+    private var summaryCard: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("This week")
+                .font(.headline)
+                .foregroundColor(.white)
+            Text("\(weeklyCompletions) workouts completed")
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 6)
+    }
+
+    private func refreshStats() {
+        weeklyCompletions = historyStore.weeklyStreakCount()
     }
 
     private func loadWorkouts() async {

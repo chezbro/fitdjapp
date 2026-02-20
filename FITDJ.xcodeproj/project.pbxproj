@@ -15,7 +15,9 @@
 		2CF7032CF9EE69D9EE1BEBC0 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619430B8AD66B75A25684D26 /* AppCoordinator.swift */; };
 		2DBE3F9190BBB236FF5ADF00 /* FITDJApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59096F2152AC2E6F09CC0700 /* FITDJApp.swift */; };
 		2DBEC30E3E13E1F17BBB0551 /* ElevenLabsVoiceServiceStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC33F4186EB86581DB3E6CC1 /* ElevenLabsVoiceServiceStub.swift */; };
+		34AB897A05CD9DC5B097D1AC /* WorkoutHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB65D5D1394E6F2D3A5CEB50 /* WorkoutHistoryStore.swift */; };
 		3D2434056F14BE75BB998F49 /* WorkoutFiltering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332B4F139BCFA09A5D27CA00 /* WorkoutFiltering.swift */; };
+		46D15FF3613A35DFA276FD99 /* WorkoutHistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF38B89EC2D46E350D586873 /* WorkoutHistoryStoreTests.swift */; };
 		48F7F4DDE698ACA0FB96B43F /* TimelineScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BAB8D4BDC4B2F11FFEB178 /* TimelineScheduler.swift */; };
 		4B870D71A5FE7098A7B3868D /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967CE1AD9807952FC730A304 /* LibraryView.swift */; };
 		4BAD47E46C3B803F93080F41 /* WorkoutFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17AF72D57A9F61A50B9065D /* WorkoutFeatureTests.swift */; };
@@ -87,8 +89,10 @@
 		A97C2F2D5C79186304D902B9 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		B2F3C25788D6FD74ED7FDED3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BC33F4186EB86581DB3E6CC1 /* ElevenLabsVoiceServiceStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsVoiceServiceStub.swift; sourceTree = "<group>"; };
+		BF38B89EC2D46E350D586873 /* WorkoutHistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryStoreTests.swift; sourceTree = "<group>"; };
 		C17AF72D57A9F61A50B9065D /* WorkoutFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutFeatureTests.swift; sourceTree = "<group>"; };
 		C99EC290FA4660974D3E346D /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		CB65D5D1394E6F2D3A5CEB50 /* WorkoutHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryStore.swift; sourceTree = "<group>"; };
 		CFC900A1F3349B25FF0468A3 /* PaymentsServiceStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsServiceStub.swift; sourceTree = "<group>"; };
 		D94266635F3BCF67416F52F5 /* WorkoutPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlayerView.swift; sourceTree = "<group>"; };
 		D9A196ECB4278431BC7E4CB1 /* FITDJUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FITDJUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +106,7 @@
 			children = (
 				50A253EFF2BCA705B4AFC7AB /* TimelineSchedulerTests.swift */,
 				C17AF72D57A9F61A50B9065D /* WorkoutFeatureTests.swift */,
+				BF38B89EC2D46E350D586873 /* WorkoutHistoryStoreTests.swift */,
 			);
 			name = UnitTests;
 			path = Tests/UnitTests;
@@ -157,6 +162,7 @@
 				67815986850EC050380DE180 /* Protocols.swift */,
 				84BAB8D4BDC4B2F11FFEB178 /* TimelineScheduler.swift */,
 				332B4F139BCFA09A5D27CA00 /* WorkoutFiltering.swift */,
+				CB65D5D1394E6F2D3A5CEB50 /* WorkoutHistoryStore.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -451,6 +457,7 @@
 				48F7F4DDE698ACA0FB96B43F /* TimelineScheduler.swift in Sources */,
 				AA8520A88041746FFCD63BB8 /* WorkoutDetailView.swift in Sources */,
 				3D2434056F14BE75BB998F49 /* WorkoutFiltering.swift in Sources */,
+				34AB897A05CD9DC5B097D1AC /* WorkoutHistoryStore.swift in Sources */,
 				B1DC720C344DAC90C76737E7 /* WorkoutPlayerView.swift in Sources */,
 				18D9F4151BBA32DE4296A7D3 /* WorkoutRepositoryFirestore.swift in Sources */,
 			);
@@ -462,6 +469,7 @@
 			files = (
 				59E85882391523DC705B3E87 /* TimelineSchedulerTests.swift in Sources */,
 				4BAD47E46C3B803F93080F41 /* WorkoutFeatureTests.swift in Sources */,
+				46D15FF3613A35DFA276FD99 /* WorkoutHistoryStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

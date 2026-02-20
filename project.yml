@@ -16,7 +16,9 @@ targets:
       - path: Core
       - path: Features
     resources:
-      - path: App/Resources/Colors.xcassets
+      - path: App/Resources
+        excludes:
+          - Info.plist
       - path: Seeds/exercises.json
       - path: Seeds/voice_cues.json
       - path: Seeds/workouts.json
