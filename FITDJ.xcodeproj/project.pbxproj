@@ -37,6 +37,7 @@
 		B1DC720C344DAC90C76737E7 /* WorkoutPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94266635F3BCF67416F52F5 /* WorkoutPlayerView.swift */; };
 		D5A461D1A151E55D029962C4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C1F33F3991B7A2ED25AFCF /* Models.swift */; };
 		DC0380B4655CDC178C708581 /* OnboardingFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7183448134FD3078604A53E7 /* OnboardingFlowUITests.swift */; };
+		F05BA171956AE2450E6A5C5A /* View+FitDJStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7639BE0C621E8BDDE8C26A12 /* View+FitDJStyle.swift */; };
 		F1EE45CC72F9F025BA6A0EDA /* DemoPlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BB772E304039C0A3FD9DFB /* DemoPlaybackController.swift */; };
 		F5804BD49C0EAB29E44A2178 /* NetworkClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61639FF4C42BDBDE25D71D6A /* NetworkClientStub.swift */; };
 		F58FE1637A05588771BB101F /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F3C25788D6FD74ED7FDED3 /* HomeView.swift */; };
@@ -83,6 +84,7 @@
 		708A1B6D99BFF70686BEC706 /* DuckingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckingCoordinator.swift; sourceTree = "<group>"; };
 		71111B6179190E1FAFCABB66 /* SpotifyMusicServiceStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyMusicServiceStub.swift; sourceTree = "<group>"; };
 		7183448134FD3078604A53E7 /* OnboardingFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowUITests.swift; sourceTree = "<group>"; };
+		7639BE0C621E8BDDE8C26A12 /* View+FitDJStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+FitDJStyle.swift"; sourceTree = "<group>"; };
 		7782158DCF9C1848B08A0879 /* CueScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueScheduler.swift; sourceTree = "<group>"; };
 		7CCBC72BD657E5EC57202146 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		8271A47E9DCFBD7C5BA15B63 /* AuthServiceStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceStub.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 			isa = PBXGroup;
 			children = (
 				05C76ADCB893E824063BD9D0 /* Color+Brand.swift */,
+				7639BE0C621E8BDDE8C26A12 /* View+FitDJStyle.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 				050F3FFEE78773AF8DFB9CAD /* SettingsView.swift in Sources */,
 				967F94F56929416FF78E4F22 /* SpotifyMusicServiceStub.swift in Sources */,
 				48F7F4DDE698ACA0FB96B43F /* TimelineScheduler.swift in Sources */,
+				F05BA171956AE2450E6A5C5A /* View+FitDJStyle.swift in Sources */,
 				AA8520A88041746FFCD63BB8 /* WorkoutDetailView.swift in Sources */,
 				3D2434056F14BE75BB998F49 /* WorkoutFiltering.swift in Sources */,
 				34AB897A05CD9DC5B097D1AC /* WorkoutHistoryStore.swift in Sources */,

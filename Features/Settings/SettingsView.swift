@@ -1,52 +1,100 @@
 import SwiftUI
 
-private struct ScrollBackgroundHiddenIfAvailable: ViewModifier {
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.scrollContentBackground(.hidden)
-        } else {
-            content
-        }
-    }
-}
-
 struct SettingsView: View {
     let container: DependencyContainer
     @State private var captionsEnabled = true
     @State private var products: [Product] = []
 
     var body: some View {
-        Form {
-            Section("Audio") {
-                Toggle("Captions", isOn: $captionsEnabled)
-                Button("Connect Spotify") {
-                    Task { try? await container.musicService.authorize() }
-                }
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Settings")
+                    .font(.largeTitle.bold())
+                    .foregroundColor(.white)
+
+                audioSection
+                accountSection
+                subscriptionSection
             }
-            Section("Account") {
-                Button("Sign in with Apple") {
-                    Task { _ = try? await container.authService.signInWithApple() }
-                }
+            .padding(16)
+            .padding(.bottom, 24)
+        }
+        .fitdjScreenBackground()
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.inline)
+        .tint(Color.fitdjAccent)
+        .task { await loadProducts() }
+    }
+
+    private var audioSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Audio")
+                .font(.headline)
+
+            Toggle("Captions", isOn: $captionsEnabled)
+                .tint(Color.fitdjAccent)
+
+            Button("Connect Spotify") {
+                Haptics.tap()
+                Task { try? await container.musicService.authorize() }
             }
-            Section("Subscription") {
-                if products.isEmpty {
-                    Text("Loading products…")
-                } else {
-                    ForEach(products) { product in
-                        Button("Subscribe to \(product.title) – \(product.price)") {
-                            Task { try? await container.paymentsService.purchase(product.id) }
+            .buttonStyle(.borderedProminent)
+            .tint(Color.fitdjAccent)
+        }
+        .foregroundColor(.white)
+        .fitdjCard()
+    }
+
+    private var accountSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Account")
+                .font(.headline)
+
+            Button("Sign in with Apple") {
+                Haptics.tap()
+                Task { _ = try? await container.authService.signInWithApple() }
+            }
+            .buttonStyle(.bordered)
+            .tint(.white)
+        }
+        .foregroundColor(.white)
+        .fitdjCard()
+    }
+
+    private var subscriptionSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Subscription")
+                .font(.headline)
+
+            if products.isEmpty {
+                Text("Loading plans…")
+                    .foregroundColor(Color.fitdjMutedText)
+            } else {
+                ForEach(products) { product in
+                    Button {
+                        Haptics.tap()
+                        Task { try? await container.paymentsService.purchase(product.id) }
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(product.title)
+                                    .font(.subheadline.bold())
+                                Text(product.price)
+                                    .font(.caption)
+                                    .foregroundColor(Color.fitdjMutedText)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
                         }
+                        .foregroundColor(.white)
                     }
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 4)
                 }
             }
         }
-        .modifier(ScrollBackgroundHiddenIfAvailable())
-        .background(Color.black)
         .foregroundColor(.white)
-        .navigationTitle("Settings")
-        .tint(Color.fitdjAccent)
-        .task { await loadProducts() }
+        .fitdjCard()
     }
 
     private func loadProducts() async {

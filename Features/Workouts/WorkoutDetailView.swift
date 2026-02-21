@@ -9,44 +9,60 @@ struct WorkoutDetailView: View {
     private var favoriteKey: String { "favorite_workout_\(workout.id)" }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 14) {
                 Text(workout.title)
                     .font(.largeTitle.bold())
-                Text("Duration: \(workout.duration) minutes")
-                Text("Guided Time: \(workout.guidedDurationSeconds / 60)m \(workout.guidedDurationSeconds % 60)s")
-                Text("Equipment: \(workout.equipment.map { $0.rawValue.capitalized }.joined(separator: ", "))")
-                Text("Level: \(workout.level.rawValue.capitalized)")
-                Divider()
+                    .foregroundColor(.white)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Duration: \(workout.duration) minutes")
+                    Text("Guided Time: \(workout.guidedDurationSeconds / 60)m \(workout.guidedDurationSeconds % 60)s")
+                    Text("Equipment: \(workout.equipment.map { $0.rawValue.capitalized }.joined(separator: ", "))")
+                    Text("Level: \(workout.level.rawValue.capitalized)")
+                }
+                .foregroundColor(.white)
+                .fitdjCard()
+
                 ForEach(workout.phases) { phase in
                     VStack(alignment: .leading, spacing: 8) {
                         Text(phase.name)
                             .font(.headline)
                         Text("\(phase.totalDurationSeconds)s total")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color.fitdjMutedText)
+
                         ForEach(phase.blocks) { block in
-                            Text(block.exercise.replacingOccurrences(of: "_", with: " "))
-                                .font(.subheadline)
+                            HStack {
+                                Image(systemName: "figure.strengthtraining.traditional")
+                                    .foregroundColor(.white.opacity(0.85))
+                                Text(block.exercise.replacingOccurrences(of: "_", with: " "))
+                                    .font(.subheadline)
+                            }
                         }
                     }
-                    .padding(.vertical, 8)
+                    .foregroundColor(.white)
+                    .fitdjCard()
                 }
             }
-            .padding()
-            .foregroundColor(.white)
+            .padding(16)
+            .padding(.bottom, 24)
         }
-        .background(Color.black.ignoresSafeArea())
+        .fitdjScreenBackground()
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
+                    Haptics.tap()
                     isFavorite.toggle()
                     UserDefaults.standard.set(isFavorite, forKey: favoriteKey)
                 } label: {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                 }
 
-                Button("Start") { showingPlayer = true }
+                Button("Start") {
+                    Haptics.tap()
+                    showingPlayer = true
+                }
             }
         }
         .sheet(isPresented: $showingPlayer) {
