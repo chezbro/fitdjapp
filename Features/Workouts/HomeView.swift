@@ -41,9 +41,14 @@ struct HomeView: View {
                                 .buttonStyle(.plain)
                             }
 
-                            Text("Recommended")
-                                .font(.title3.bold())
-                                .foregroundColor(.white)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Today’s Picks")
+                                    .font(.title3.bold())
+                                    .foregroundColor(.white)
+                                Text("Tap a session and start in seconds.")
+                                    .font(.footnote)
+                                    .foregroundColor(.white.opacity(0.68))
+                            }
 
                             LazyVStack(spacing: 12) {
                                 ForEach(filteredWorkouts) { workout in
@@ -53,6 +58,7 @@ struct HomeView: View {
                                     .buttonStyle(.plain)
                                 }
                             }
+                            .animation(.spring(response: 0.4, dampingFraction: 0.85), value: filteredWorkouts.map(\.id))
                         }
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
@@ -64,7 +70,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .navigationTitle("Featured")
+            .navigationTitle("Train")
             .searchable(text: $searchText, prompt: "Search workouts")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -167,18 +173,31 @@ struct HomeView: View {
                 action()
             }
         } label: {
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundColor(isSelected ? .black : .white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 9)
-                .background(isSelected ? Color.white : Color.white.opacity(0.1))
-                .clipShape(Capsule())
-                .overlay(
-                    Capsule().stroke(Color.white.opacity(isSelected ? 0 : 0.2), lineWidth: 1)
-                )
+            HStack(spacing: 6) {
+                Image(systemName: filterIcon(for: title))
+                    .font(.caption)
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+            }
+            .foregroundColor(isSelected ? .black : .white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .background(isSelected ? Color.white : Color.white.opacity(0.1))
+            .clipShape(Capsule())
+            .overlay(
+                Capsule().stroke(Color.white.opacity(isSelected ? 0 : 0.2), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
+    }
+
+    private func filterIcon(for title: String) -> String {
+        switch title.lowercased() {
+        case "beginner": return "leaf.fill"
+        case "intermediate": return "flame.fill"
+        case "advanced": return "bolt.heart.fill"
+        default: return "square.grid.2x2.fill"
+        }
     }
 
     private func quickStartCard(workout: Workout) -> some View {
@@ -228,13 +247,21 @@ struct HomeView: View {
 private struct WorkoutRow: View {
     let workout: Workout
 
+    private var levelIcon: String {
+        switch workout.level {
+        case .beginner: return "leaf.fill"
+        case .intermediate: return "flame.fill"
+        case .advanced: return "bolt.fill"
+        }
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(Color.fitdjAccent.opacity(0.25))
                 .frame(width: 56, height: 56)
                 .overlay(
-                    Image(systemName: "figure.run")
+                    Image(systemName: levelIcon)
                         .foregroundColor(.white)
                 )
 
@@ -246,6 +273,10 @@ private struct WorkoutRow: View {
                 Text("\(workout.duration) min · \(workout.level.rawValue.capitalized)")
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.68))
+
+                Text("Guided coaching + adaptive music")
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.55))
             }
 
             Spacer()

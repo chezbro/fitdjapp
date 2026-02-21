@@ -91,15 +91,17 @@ struct WorkoutPlayerView: View {
     }
 
     private var topHeader: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(workout.title)
-                    .font(.title2.bold())
-                Text("Guided Session")
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+        VStack(alignment: .leading, spacing: 8) {
+            Text(workout.title)
+                .font(.title2.bold())
+            Text("Guided Session")
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.7))
+
+            HStack(spacing: 8) {
+                chip(text: "\(workout.duration) min")
+                chip(text: workout.level.rawValue.capitalized)
             }
-            Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -166,11 +168,15 @@ struct WorkoutPlayerView: View {
                 .font(.headline)
 
             if let track = currentTrack {
-                Text(track.title)
-                    .font(.title3.bold())
-                Text(track.artist)
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.75))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(track.title)
+                        .font(.title3.bold())
+                    Text(track.artist)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.75))
+                }
+                .id(track.title)
+                .transition(.opacity.combined(with: .move(edge: .trailing)))
 
                 HStack(spacing: 10) {
                     chip(text: "\(track.bpm) BPM")
@@ -185,6 +191,7 @@ struct WorkoutPlayerView: View {
         .padding(16)
         .background(Color.white.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .animation(.easeInOut(duration: 0.25), value: currentTrackIndex)
     }
 
     private func chip(text: String) -> some View {
@@ -223,7 +230,7 @@ struct WorkoutPlayerView: View {
                     togglePause()
                 }
 
-                actionButton("Skip 15s", systemImage: "goforward.15") {
+                actionButton("Skip Block", systemImage: "goforward.15") {
                     skip(seconds: 15)
                 }
 

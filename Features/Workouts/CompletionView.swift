@@ -65,7 +65,7 @@ struct CompletionView: View {
             Text("Workout Complete")
                 .font(.largeTitle.bold())
 
-            Text("Excellent effort. Keep stacking consistent days.")
+            Text(momentumMessage)
                 .font(.subheadline)
                 .foregroundColor(.white.opacity(0.75))
         }
@@ -122,7 +122,7 @@ struct CompletionView: View {
 
     private var actionRow: some View {
         VStack(spacing: 10) {
-            Button("Share Progress") {}
+            Button("Share the Win") {}
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 13)
@@ -141,6 +141,17 @@ struct CompletionView: View {
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
+    }
+
+    private var momentumMessage: String {
+        guard let insights else { return "Excellent effort. Keep stacking consistent days." }
+        if insights.weeklyCompletions >= 5 {
+            return "You’re in elite consistency mode this week."
+        }
+        if insights.weeklyCompletions >= 3 {
+            return "Momentum is building fast—keep this streak alive."
+        }
+        return "Great start. One more session locks the habit in."
     }
 
     private func format(_ seconds: Int) -> String {
